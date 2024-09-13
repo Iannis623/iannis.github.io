@@ -297,4 +297,4 @@ int32 FHLSLMaterialTranslator::ExampleOutput()
 
 Compile the Engine, create a new Material and search the name of the Custom Output node, in this case `ExampleOutput`.
 
-![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputsearch.jpg){: width="972" height="589" }
+![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputsearch.jpg){: width="996" height="402" }
