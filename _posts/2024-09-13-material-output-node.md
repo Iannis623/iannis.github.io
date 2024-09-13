@@ -298,3 +298,8 @@ int32 FHLSLMaterialTranslator::ExampleOutput()
 Compile the Engine, create a new Material and search the name of the Custom Output node, in this case `ExampleOutput`.
 
 ![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputsearch.png){: width="988" height="420" }
+![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputingraph.png){: width="952" height="737" }
+
+![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputnoinputs.png){: width="280" height="61" .w-50 .right}
+As you can see, we get the error for not having any inputs connected to the Example Output node.\
+If we connect anything to `OverrideBaseColor` or to `OverrideNormal` it'll compile.
