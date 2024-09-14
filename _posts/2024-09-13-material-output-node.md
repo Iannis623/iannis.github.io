@@ -1,13 +1,13 @@
 ---
 title: Custom Material Output Node in UE5
 description: Learn how to make a fully custom material output node with source edits
-author: Iannis Stefan Palaczkos
+author: iannis
 date: 2024-09-13 14:20:00 +0100
 categories: [Gamedev, Materials]
 tags: [gamedev, materials]     # TAG names should always be lowercase
+image:
+  path: /assets/img/posts/2024-09-13-material-output-node/exampleoutputtitle.png
 ---
-
-This is a Work in Progress post
 
 # Introduction
 In this post you'll learn to modify the unreal engine source to add a custom material output, technically called a `MaterialExpressionCustomOutput`, to your material graphs.\
@@ -27,7 +27,7 @@ In this example we'll use it to directly replace the BaseColor and Normal of a M
 >```
 {: .prompt-info }
 
-# Material Expression Custom Output
+## MaterialExpressionExampleOutput.h
 A `MaterialExpressionCustomOutput` is file that defines the Input parameters of the Custom Output node.
 
 You can find examples of this in `Engine/Source/Runtime/Engine/Classes/Materials/`\
@@ -245,6 +245,17 @@ bUsedWithNeuralNetworks(false),
 bHasExampleOutputNode(false)
 ```
 
+## Definitions.usf
+
+In preparation for the Translator, we need a definition that will be used in the HLSL files to branch between different results based on the presence of the Custom Output node or not.\
+<br>
+You can put this at the end of the file.
+```cpp
+// SourceMod: Example Output Define in global Definitions
+#ifndef EXAMPLE_OUTPUT
+#define EXAMPLE_OUTPUT										0
+#endif
+```
 
 ## HLSLMaterialTranslator.h 
 
@@ -267,7 +278,7 @@ if (EnvironmentDefines->bVirtualTextureOutput)
 	OutEnvironment.SetDefine(TEXT("VIRTUAL_TEXTURE_OUTPUT"), 1);
 }
 
-// SourceMod: Setting #DEFINE of Example Output to 1
+// SourceMod: Setting #define of previously declared EXAMPLE_OUTPUT in Definitions.usf to 1
 if (MaterialCompilationOutput.bHasExampleOutputNode)
 {
 	OutEnvironment.SetDefine(TEXT("EXAMPLE_OUTPUT"), 1);
@@ -303,3 +314,103 @@ Compile the Engine, create a new Material and search the name of the Custom Outp
 ![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputnoinputs.png){: width="280" height="61" .w-50 .right}
 As you can see, we get the error for not having any inputs connected to the Example Output node.\
 If we connect anything to `OverrideBaseColor` or to `OverrideNormal` it'll compile.
+
+# Making it actually work
+## BasePassPixelShader.usf
+
+The part where the magic happens is this one.\
+We will assume we don't have Substrate enabled.
+
+```cpp
+// Store the results in local variables and reuse instead of calling the functions multiple times.
+half3 BaseColor = GetMaterialBaseColor(PixelMaterialInputs);
+half  Metallic = GetMaterialMetallic(PixelMaterialInputs);
+half  Specular = GetMaterialSpecular(PixelMaterialInputs);
+
+float Roughness = GetMaterialRoughness(PixelMaterialInputs);
+float Anisotropy = GetMaterialAnisotropy(PixelMaterialInputs);
+uint ShadingModel = GetMaterialShadingModel(PixelMaterialInputs);
+half Opacity = GetMaterialOpacity(PixelMaterialInputs);
+```
+
+We see the BaseColor that we'll need to override, but not the Normal.\
+Chose the Normal specifically beacuse it's in a different file, but the structure is similar.
+<br>
+
+The end result should look like this:
+```cpp
+	// SourceMod: OverrideBaseColor shader implementation
+#if !EXAMPLE_OUTPUT
+	half3 BaseColor = GetMaterialBaseColor(PixelMaterialInputs);
+#else
+	// Get Index 0 which in this case is OverrideBaseColor
+	half3 BaseColor = GetExampleOutput0(MaterialParameters);
+#endif
+```
+
+![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputnooverride.png){: width="1247" height="629" }
+![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputoverride.png){: width="1198" height="633" }
+
+## MaterialTemplate.ush
+
+It's time to do the same for the Normal, which is located in `MaterialTemplate.ush`.
+```cpp
+// Note that here MaterialNormal can be in world space or tangent space
+float3 MaterialNormal = GetMaterialNormal(Parameters, PixelMaterialInputs);
+```
+
+Following the same we did above, the end result will look like this:
+```cpp
+	// Note that here MaterialNormal can be in world space or tangent space
+	// SourceMod: Example material template branch implementation
+#if !EXAMPLE_OUTPUT
+	float3 MaterialNormal = GetMaterialNormal(Parameters, PixelMaterialInputs);
+#else
+	// Get Index 1 which in this case is OverrideNormal
+	float3 MaterialNormal = GetExampleOutput1(Parameters);
+#endif
+```
+
+![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputnonormal.png){: width="1259" height="771" }
+![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputnormal.png){: width="1260" height="772" }
+
+## Conclusions
+
+In conclusion, you now have the full power to pass any parameter into the Material Graph and modify how the Engine compiles a Material in HLSL.\
+<br>
+This is a very basic example that assumes both nodes will be connected, you can of course create your own expecions and checks for connections, making so only connected pins are considered for example.
+<br>
+Or you can create fancier effects, like lerping between BaseColor and OvverideBase color:
+```cpp
+// We use the OverrideNormal as an Injection example, ideally would create another ExampleOutput
+// but instead we use the x value (the first one) of the Normal Vector for the Distance for the quick and dirty example
+float Distance =  GetExampleOutput1(MaterialParameters).x;
+float InMin = 1000.f;
+float InMax = 2000.f;
+float OutMin = 1.f;
+float OutMax = 0.f;
+
+float LerpAlpha = (Distance - InMin) * (OutMax - OutMin) / (InMax - InMin) + OutMin;
+
+
+half3 BaseColor = 0;
+
+BRANCH
+if (LerpAlpha <= 0)
+{
+	BaseColor = GetExampleOutput0(MaterialParameters);
+}
+else if (LerpAlpha > 0 && LerpAlpha < 1 )
+{
+	BaseColor = lerp(GetExampleOutput0(MaterialParameters), GetMaterialBaseColor(PixelMaterialInputs), LerpAlpha);
+}
+else
+{
+	BaseColor = GetMaterialBaseColor(PixelMaterialInputs);
+}
+```
+
+![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputnodedistance.png){: width="643" height="677" }
+![Desktop View](/assets/img/posts/2024-09-13-material-output-node/exampleoutputdistance.png){: width="1084" height="897" }
+
+For any doubts or clarifications, don't hesitate to contact me!
