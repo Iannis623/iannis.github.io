@@ -121,8 +121,8 @@ comments:
   giscus:
     repo: Iannis623/iannis623.github.io # <gh-username>/<repo>
     repo_id: R_kgDOMxMtqA
-    category:
-    category_id:
+    category: Announcements
+    category_id: DIC_kwDOMxMtqM4CigLR
     mapping: # optional, default to 'pathname'
     strict: # optional, default to '0'
     input_position: # optional, default to 'bottom'
