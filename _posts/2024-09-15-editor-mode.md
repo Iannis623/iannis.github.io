@@ -6,7 +6,7 @@ date: 2024-09-15 22:45:00 +0100
 categories: [Gamedev, Editor]
 tags: [gamedev, editor, nosource]     # TAG names should always be lowercase
 image:
-  path: /assets/img/posts/2024-09-15-editor-mode/under-construction.png
+  path: /assets/img/posts/2024-09-15-editor-mode/under-construction.jpg
 ---
 
 # Introduction
