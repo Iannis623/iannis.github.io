@@ -1016,3 +1016,7 @@ void FExampleEditorModeModule::StartupModule()
 > <br>
 > FOR NOW IT'LL COMPILE AND YOU'LL HAVE ACCESS TO THE EDITOR MODE, BUT CLICKING IT WILL CRASH!
 {: .prompt-danger }
+
+> For an early preview and more in depth look into a proper implementation of those systems, please have a look at:
+> <a href="https://github.com/Iannis623/UE-GridGen">https://github.com/Iannis623/UE-GridGen</a>
+{: .prompt-tip }
