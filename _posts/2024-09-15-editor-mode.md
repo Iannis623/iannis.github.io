@@ -440,6 +440,7 @@ We're implementing `InContent()` in a moment.
 /* Rest of code goes here */
 ///
 
+#undef RootToContentDir
 #undef IMAGE_PLUGIN_BRUSH
 ```
 
@@ -587,6 +588,7 @@ void FExampleEditorModeStyle::Initialize()
 	FSlateStyleRegistry::RegisterSlateStyle(*StyleSet.Get());
 }
 
+#undef RootToContentDir
 #undef IMAGE_PLUGIN_BRUSH
 
 void FExampleEditorModeStyle::Shutdown()
