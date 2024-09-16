@@ -4,7 +4,7 @@ description: Learn how to make a fully custom material output node with source e
 author: iannis
 date: 2024-09-13 14:20:00 +0100
 categories: [Gamedev, Materials]
-tags: [gamedev, materials]     # TAG names should always be lowercase
+tags: [gamedev, materials, source]     # TAG names should always be lowercase
 image:
   path: /assets/img/posts/2024-09-13-material-output-node/exampleoutputtitle.png
 ---
