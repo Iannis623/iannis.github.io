@@ -1,10 +1,10 @@
 ---
 title: Custom Material Output Node in UE5
-description: Learn how to make a fully custom material output node with source edits
+description: Learn how to make a fully custom material output node with no source edits (only engine shaders)
 author: iannis
 date: 2024-09-13 14:20:00 +0100
 categories: [Gamedev, Materials]
-tags: [gamedev, materials, source]     # TAG names should always be lowercase
+tags: [gamedev, materials, nosource]     # TAG names should always be lowercase
 image:
   path: /assets/img/posts/2024-09-13-material-output-node/exampleoutputtitle.png
 ---
@@ -14,7 +14,7 @@ In this post you'll learn to add a custom material output, technically called a 
 Those can se extremely useful if you want to directly interface with the shader files while passing your own custom values inside of it.\
 In this example we'll use it to directly replace the BaseColor and Normal of a Material.
 
-> `SourceMod` are comments that indicate it's a Source Engine edits.\
+> `SourceMod` are comments that indicate it's a Source Engine edit.\
 > Sometimes may be included above snippets of code to showcase where a certain code snippet should be placed.\
 > You only need to include code snippets with `SourceMod` comment\
 > For example: 
