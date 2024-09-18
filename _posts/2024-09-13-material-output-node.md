@@ -4,7 +4,7 @@ description: Learn how to make a fully custom material output node with no sourc
 author: iannis
 date: 2024-09-13 14:20:00 +0100
 categories: [Gamedev, Materials]
-tags: [gamedev, materials, nosource]     # TAG names should always be lowercase
+tags: [gamedev, materials, nosource, "5.4"]     # TAG names should always be lowercase
 image:
   path: /assets/img/posts/2024-09-13-material-output-node/exampleoutputtitle.png
 ---
