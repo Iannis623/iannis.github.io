@@ -192,7 +192,9 @@ private:
 };
 ```
 
-## ExampleEditorModeStyle.cpp
+## Implementations
+
+### ExampleEditorModeStyle.cpp
 We start with implementing the Style since it's self contained and others rely on it.
 
 Download this icon and place it into `YourProject -> Plugins -> ExampleEditorMode -> Content -> Icons`
@@ -277,7 +279,7 @@ void FExampleEditorModeStyle::Shutdown()
 }
 ```
 
-## ExampleEditorMode.cpp
+### ExampleEditorMode.cpp
 
 ```cpp
 #include "ExampleEditorMode.h"
@@ -329,7 +331,7 @@ TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> UExampleEditorMode::GetModeComma
 #undef LOCTEXT_NAMESPACE
 ```
 
-## ExampleEditorModeCommands.cpp
+### ExampleEditorModeCommands.cpp
 
 ```cpp
 #include "ExampleEditorModeCommands.h"
@@ -359,7 +361,7 @@ TMap<FName, TArray<TSharedPtr<FUICommandInfo>>> FExampleEditorModeCommands::GetC
 #undef LOCTEXT_NAMESPACE
 ```
 
-## ExampleEditorModeToolkit.cpp
+### ExampleEditorModeToolkit.cpp
 
 ```cpp
 #include "ExampleEditorModeToolkit.h"
